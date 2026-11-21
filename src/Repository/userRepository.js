@@ -16,3 +16,15 @@ export async function CriarConta(usuario) {
     let info = resposta[0];
     return info.affectedRows;
 }
+
+export async function BuscarEmail(email) {
+
+    const command = `
+    select * from usuarios
+    where email = ?
+    `
+
+    let [resposta] = await connection.query(command, [email]);
+    return resposta[0];
+
+}

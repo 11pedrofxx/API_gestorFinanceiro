@@ -18,4 +18,18 @@ endpoints.post('/user', async (req, resp) => {
 
 })
 
+endpoints.post('/login', async (req, resp) => {
+    try {
+
+        let info = req.body;
+        let token = await db.LoginService(info);
+        resp.send(token)
+
+    } catch (error) {
+
+        resp.status(400).send(padraoErro(error));
+
+    }
+})
+
 export default endpoints
