@@ -7,7 +7,7 @@ import connection from './Repository/connection.js';
 
 const api = express();
 api.use(cors());
-api.use(express.json)
+api.use(express.json())
 addRoutes(api);
 
 const PORT = process.env.PORT;
