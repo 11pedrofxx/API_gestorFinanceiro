@@ -5,6 +5,8 @@ import addRoutes from './routes.js'
 
 import connection from './Repository/connection.js';
 
+import { padraoErro } from './Utils/erroGlobal.js';
+
 const api = express();
 api.use(cors());
 api.use(express.json())
