@@ -6,6 +6,9 @@ create table usuarios (
     criado_em datetime default current_timestamp
 );
 
+alter table usuarios
+add column saldo decimal(10, 2) not null default 0.00;
+
 create table movimentacoes (
     id int auto_increment primary key,
     usuario_id int not null,
