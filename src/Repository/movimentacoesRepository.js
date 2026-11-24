@@ -20,16 +20,8 @@ export async function registarEntrada(usuario_id, info) {
 
         let informacoes = resposta[0];
 
-        const commandSaldo = `
-        update usuarios
-        set saldo = saldo + ?
-        where id = ?
-        `
-
-        await conn.query(commandSaldo, [
-            info.valor,
-            usuario_id
-        ]);
+        let tipo = 'Entrada'
+        await editarSaldo(conn, tipo, info, usuario_id)
 
         await conn.commit();
         return informacoes.affectedRows;
@@ -65,17 +57,9 @@ export async function registrarSaida(usuario_id, info) {
         ]);
 
         let informacoes = resposta[0];
-        
-        const commandSubtrairSaldo = `
-        update usuarios
-        set saldo = saldo - ?
-        where id = ?
-        `
 
-        let alteracao = await conn.query(commandSubtrairSaldo, [
-            info.valor,
-            usuario_id
-        ])
+        let tipo = 'Saida'
+        await editarSaldo(conn, tipo, info, usuario_id)
 
         await conn.commit();
         return informacoes.affectedRows;
@@ -85,6 +69,38 @@ export async function registrarSaida(usuario_id, info) {
         throw error;
     } finally {
         conn.release();
+    }
+
+}
+
+export async function editarSaldo(conn, tipo, info, usuario_id) {
+
+    if (tipo === 'Entrada') {
+        const commandSaldo = `
+        update usuarios
+        set saldo = saldo + ?
+        where id = ?
+        `
+
+        await conn.query(commandSaldo, [
+            info.valor,
+            usuario_id
+        ]);
+    }
+
+    else {
+
+        const commandSubtrairSaldo = `
+        update usuarios
+        set saldo = saldo - ?
+        where id = ?
+        `
+
+        await conn.query(commandSubtrairSaldo, [
+            info.valor,
+            usuario_id
+        ])
+
     }
 
 }
