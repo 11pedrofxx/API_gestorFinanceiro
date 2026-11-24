@@ -52,6 +52,7 @@ export async function registrarSaida(usuario_id, info) {
     try {
         
         await conn.beginTransaction();
+
         const commandSaida = `
         insert into movimentacoes (usuario_id, tipo, descricao, valor)
         values (?, 'Saida', ?, ?);
@@ -83,7 +84,7 @@ export async function registrarSaida(usuario_id, info) {
         await conn.rollback();
         throw error;
     } finally {
-        await conn.release();
+        conn.release();
     }
 
 }
