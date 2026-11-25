@@ -33,4 +33,18 @@ endpoints.post('/registrar-saida', autenticarToken, async (req, resp) => {
 
 })
 
+endpoints.get('/consulta-saldo' , autenticarToken, async (req, resp) => {
+
+    try {
+        
+        let id = req.usuario.id;
+        let saldo = await service.ConsultaSaldoService(id);
+        resp.send(saldo);
+
+    } catch (error) {
+        resp.status(400).send(padraoErro(error));
+    }
+
+})
+
 export default endpoints

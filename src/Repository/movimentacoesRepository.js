@@ -104,3 +104,30 @@ export async function editarSaldo(conn, tipo, info, usuario_id) {
     }
 
 }
+
+export async function verSaldo(id) {
+    
+    const command = `
+    select saldo from usuarios
+    where id = ?
+    `
+
+    let resposta = await connection.query(command, [id]);
+    return resposta[0];
+    
+
+
+}
+
+export async function consultarID(id) {
+    
+    const command = `
+    select * from usuarios
+    where id = ?
+    `
+
+    let resposta = await connection.query(command, [id]);
+    let info = resposta[0];
+    return info
+
+}

@@ -29,3 +29,19 @@ export async function SaidaService(usuario_id, info) {
     return linhasAfetadas;
 
 }
+
+export async function ConsultaSaldoService(id) {
+    
+    let consulta = await repo.consultarID(id);
+    if (isNaN(id)) {
+        throw new Error('Informe o número do id.')
+    }
+    if (consulta.length === 0) {
+        throw new Error('O id informado não existe ou está indisponivel')
+    }
+
+
+    let saldo = await repo.verSaldo(id);
+    return saldo;
+
+}
