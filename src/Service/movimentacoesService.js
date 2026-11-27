@@ -45,3 +45,12 @@ export async function ConsultaSaldoService(id) {
     return saldo;
 
 }
+
+export async function DeletarMovimentacaoService(idMovimentacao, usuarioId) {
+    if (!idMovimentacao) {
+        throw new Error('Informe o idMovimentacao para excluir.');
+    }
+
+    const linhasAfetadas = await repo.deletarMovimentacao(idMovimentacao, usuarioId);
+    return linhasAfetadas;
+}

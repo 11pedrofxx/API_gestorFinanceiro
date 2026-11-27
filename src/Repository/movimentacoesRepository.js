@@ -131,3 +131,70 @@ export async function consultarID(id) {
     return info
 
 }
+export async function deletarMovimentacao(idMovimentacao, usuarioId) {
+    const conn = await connection.getConnection();
+
+    try {
+        await conn.beginTransaction();
+
+        const movimentacoes = await buscarMovimentacao(conn, idMovimentacao, usuarioId);
+
+        if (movimentacoes.length === 0) {
+            throw new Error('Movimentação não encontrada para este usuário.');
+        }
+
+        const movimentacao = movimentacoes[0];
+        const valor = Number(movimentacao.valor);
+
+        await estornarSaldo(conn, movimentacao.tipo, valor, usuarioId);
+
+        const commandDelete = `
+            delete from movimentacoes
+            where id = ? and usuario_id = ?
+        `;
+
+        const [resultado] = await conn.query(commandDelete, [idMovimentacao, usuarioId]);
+
+        await conn.commit();
+        return resultado.affectedRows;
+    } catch (error) {
+        await conn.rollback();
+        throw error;
+    } finally {
+        conn.release();
+    }
+}
+
+export async function buscarMovimentacao(conn, idMovimentacao, usuarioId) {
+    const command = `
+        select id, usuario_id, tipo, valor
+        from movimentacoes
+        where id = ? and usuario_id = ?
+    `;
+
+    const [linhas] = await conn.query(command, [idMovimentacao, usuarioId]);
+    return linhas;
+}
+
+async function estornarSaldo(conn, tipo, valor, usuarioId) {
+    let command;
+
+    if (tipo === 'Entrada') {
+        command = `
+            update usuarios
+            set saldo = saldo - ?
+            where id = ?
+        `;
+    } else if (tipo === 'Saida') {
+        command = `
+            update usuarios
+            set saldo = saldo + ?
+            where id = ?
+        `;
+    } else {
+        throw new Error('Tipo de movimentação inválido para estorno.');
+    }
+
+    const [resultado] = await conn.query(command, [valor, usuarioId]);
+    return resultado.affectedRows;
+}

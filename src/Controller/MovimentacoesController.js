@@ -2,6 +2,7 @@ import { response, Router } from "express";
 import { autenticarToken } from "../Utils/middleware.js";
 import * as service from '../Service/movimentacoesService.js';
 import { padraoErro } from "../Utils/erroGlobal.js";
+import { buscarMovimentacao } from "../Repository/movimentacoesRepository.js";
 
 const endpoints = Router();
 
@@ -46,5 +47,17 @@ endpoints.get('/consulta-saldo' , autenticarToken, async (req, resp) => {
     }
 
 })
+
+endpoints.delete('/deletar-movimentacao', autenticarToken, async (req, resp) => {
+    try {
+        const usuarioId = req.usuario.id;
+        const { idMovimentacao } = req.body;
+
+        const linhasAfetadas = await service.DeletarMovimentacaoService(idMovimentacao, usuarioId);
+        resp.send({ linhasAfetadas });
+    } catch (error) {
+        resp.status(400).send(padraoErro(error));
+    }
+});
 
 export default endpoints
